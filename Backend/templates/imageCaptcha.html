@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CAPTCHA Verification</title>
+    <style>
+      .image-captcha-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* 4 columns */
+        gap: 10px; /* Spacing between the images */
+        max-width: 450px; /* Container width */
+        margin: auto; /* Center the container */
+        padding: 20px;
+        background-color: #666; /* Grey background color */
+        animation: fadeIn 1s ease-in-out; /* Fade-in animation */
+        border: 2px solid #333; /* Dark border for the container */
+      }
+      .captcha-image {
+        width: 100px; /* Fixed width */
+        height: 100px; /* Fixed height */
+        object-fit: cover; /* Maintain aspect ratio */
+        cursor: pointer;
+        border: 2px solid transparent; /* Default border */
+      }
+      .captcha-image.selected {
+        /* border-color: darkblue; Dark blue border for selected images */
+        border-color: #c5c8f1;
+        border-width: 4px; /* Bold border */
+      }
+      .sample-container {
+        margin: 20px auto;
+        width: 150px; /* Fixed width */
+        height: 150px; /* Fixed height */
+        border: 2px solid #333; /* Border for the sample image */
+        animation: slideIn 1s ease-in-out; /* Slide-in animation */
+        background-color: #666; /* Skyish blue background color */
+        padding: 10px;
+      }
+      .sample-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      #verify_btn,
+      #refresh_btn {
+        display: block;
+        margin: 10px auto;
+        padding: 10px 20px;
+        cursor: pointer;
+        border: none;
+        background-color: #4caf50; /* Green background */
+        color: white; /* White text */
+        border-radius: 5px; /* Rounded corners */
+        font-size: 16px; /* Increase font size */
+        transition: background-color 0.3s; /* Smooth color transition */
+        &:hover {
+          background-color: #45a049; /* Darker green on hover */
+        }
+        &:focus {
+          outline: none; /* Remove outline on focus */
+        }
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0; /* Light gray background */
+      }
+      .container {
+        text-align: center;
+        animation: fadeIn 1s ease-in-out; /* Fade-in animation */
+        border: 2px solid #000; /* Dark border for the container */
+        padding: 20px;
+        /* background-color: #abd0e1; */
+        background-color: #e7ecef;
+        border-radius: 10px; /* Rounded corners for the container */
+
+        &.python-captcha {
+        }
+
+        width: 50%;
+        margin: auto;
+      }
+      .welcome-message {
+        font-size: 36px;
+        color: #333;
+        margin-bottom: 10px;
+        font-style: italic; /* Italic text */
+        font-weight: bold; /* Bold text */
+        animation: slideIn 1s ease-in-out; /* Slide-in animation */
+      }
+      .sub-message {
+        font-size: 24px;
+        color: #333;
+        font-style: italic; /* Italic text */
+        margin-bottom: 20px;
+        animation: slideIn 1s ease-in-out; /* Slide-in animation */
+      }
+      .instruction {
+        font-size: 18px; /* Set minimum font size */
+        margin-bottom: 10px; /* Optional: Adjust margin */
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateY(-100px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container python-captcha">
+      <!-- <div class="welcome-message">Welcome back!</div>
+        <div class="sub-message">We are excited to see you back</div> -->
+      <div class="sample-container">
+        <img id="sample-image" src="" alt="Sample Image" />
+      </div>
+      <div class="instruction">
+        <p>Select the images that are most relevant to the provided sample.</p>
+      </div>
+      <div class="image-captcha-container" id="image-captcha-container"></div>
+      <button id="verify_btn">Verify</button>
+      <button id="refresh_btn">Refresh</button>
+    </div>
+
+    <script>
+      let captchaCategory;
+      let selectedImages = [];
+      function load_image_Captcha() {
+        fetch("/generate-image-captcha")
+          .then((response) => response.json())
+          .then((data) => {
+            captchaCategory = data.image_captcha_id;
+            document.getElementById("sample-image").src = data.sample_image;
+
+            const container = document.getElementById(
+              "image-captcha-container"
+            );
+            container.innerHTML = "";
+            selectedImages = [];
+            data.captcha_images.forEach((imgPath) => {
+              const img = document.createElement("img");
+              img.src = imgPath;
+              img.classList.add("captcha-image");
+              img.onclick = () => toggleSelection(img, imgPath);
+              container.appendChild(img);
+            });
+          });
+      }
+
+      function toggleSelection(img, imgPath) {
+        if (img.classList.contains("selected")) {
+          img.classList.remove("selected");
+          selectedImages = selectedImages.filter((item) => item !== imgPath);
+        } else {
+          img.classList.add("selected");
+          selectedImages.push(imgPath);
+        }
+      }
+
+      window.onload = load_image_Captcha;
+    </script>
+  </body>
+</html>

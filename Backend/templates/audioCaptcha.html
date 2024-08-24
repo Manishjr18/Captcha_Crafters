@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAPTCHA</title>
+    <link rel="stylesheet" href="http://localhost:5000/static/css/audioCaptcha.css">
+</head>
+<body>
+    <div class="container captcha-backend-body">
+        <form method="POST" id="captchaForm">
+            <div class="captcha-box">
+                {% if error %}
+                    <p id="error" class="error">{{ error }}</p>
+                {% else %}
+                    <p id="error" class="error" style="display: none;"></p>
+                {% endif %}
+                
+                {% if success %}
+                    <p id="success" class="success">{{ success }}</p>
+                {% else %}
+                    <p id="success" class="success" style="display: none;"></p>
+                {% endif %}
+                
+                <img id="captcha-img" src="{{ image_url }}" alt="CAPTCHA"><br>
+                
+                <div class="audio-box">
+                    <audio id="captcha-audio" controls>
+                        <source src="{{ audio_url }}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div class="input-box">
+                    <input type="text" name="ip" placeholder="Enter CAPTCHA" required>
+                </div>
+                
+                <button type="submit">Submit</button>
+                <button type="button" id="refreshCaptchaButton">Refresh</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- <script>
+        function refresh_audio_captcha() {
+            fetch('/refresh-audio-captcha')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('captcha-img').src = data.new_audio_captcha_url;
+                    document.getElementById('captcha-audio').src = data.new_audio_url;
+                    document.getElementById('error').style.display = 'none';
+                    document.getElementById('success').style.display = 'none';
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script> -->
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAPTCHA</title>
+    <link rel="stylesheet" href="http://localhost:5000/static/css/textCaptcha.css">
+</head>
+<body>
+    <div class="container captcha-backend-body">
+        <form method="POST" id="captchaForm">
+            <div class="captcha-box">
+                <!-- Display error message if there is an error -->
+                {% if error %}
+                    <p id="error" class="error">{{ error }}</p>
+                {% else %}
+                    <p id="error" class="error" style="display: none;"></p>
+                {% endif %}
+                
+                <!-- Display success message if CAPTCHA is validated successfully -->
+                {% if success %}
+                    <p id="success" class="success">{{ success }}</p>
+                {% else %}
+                    <p id="success" class="success" style="display: none;"></p>
+                {% endif %}
+                
+                <!-- Display the CAPTCHA image -->
+                <div style="display: block; margin-left: auto; margin-right: auto; width: 50%;">
+                    <!-- <img id="captcha-img" src="http://localhost:5000/static/images/{{ tstr }}.png" alt="CAPTCHA"> -->
+                     <script>console.log("\n\n\n\n {{ tstr }} \n\n\n\n")</script>
+                    <img id="captcha-img" src="{{ tstr }}" alt="CAPTCHA">
+                </div>
+                <!-- Input field for user to enter CAPTCHA -->
+                <input type="text" name="ip" placeholder="Enter CAPTCHA" required><br>
+                <button type="submit">Submit</button><br>
+                <!-- Button to refresh the CAPTCHA image -->
+                <button type="button" id="refreshCaptchaButton">Refresh</button><br>
+            </div>
+        </form>
+    </div>
+
+    <!-- <script>
+        function refreshTextCaptcha() {
+            // Fetch new CAPTCHA URL from the server
+            fetch('/refresh-text-captcha')
+                
+                .then(response => response.text())
+                .then(data => {
+                    document.querySelector('.captcha-box').innerHTML = data.container_html;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script> -->
+</body>
+</html>
